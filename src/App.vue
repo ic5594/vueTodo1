@@ -1,30 +1,66 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="app">
+    <TodoHeader></TodoHeader>
+    <TodoInput v-on:addTodo="addTodo"></TodoInput>
+    <TodoList v-bind:propsdata="todoItems" @removeTodo="removeTodo"></TodoList>
+    <TodoFooter v-on:removeAll="clearAll"></TodoFooter>
   </div>
-  <router-view/>
 </template>
+<script>
+import TodoHeader from './components/TodoHeader.vue'
+import TodoInput from './components/TodoInput.vue'
+import TodoList from './components/TodoList.vue'
+import TodoFooter from './components/TodoFooter.vue'
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+export default {
+  data(){
+    return{
+      todoItems:[]
     }
+  },
+  created(){
+        if(localStorage.length>0){
+            for(var i=0;i<localStorage.length;i++){
+                this.todoItems.push(localStorage.key(i))
+                console.log(this.todoItems)
+            }
+        }
+    },
+  methods:{
+    addTodo:function(todoItem){
+      localStorage.setItem(todoItem,todoItem)
+      this.todoItems.push(todoItem)
+    },
+    removeTodo:function(todoItem,index){
+      localStorage.removeItem(todoItem)
+      this.todoItems.splice(index,1)
+    },
+    clearAll:function(){
+      localStorage.clear()
+      this.todoItems=[]
+    }
+  },
+  components:{
+    'TodoHeader':TodoHeader,
+    'TodoInput':TodoInput,
+    'TodoList':TodoList,
+    'TodoFooter':TodoFooter
   }
+}
+</script>
+<style>
+body{
+    text-align: center;
+    background-color: #F6F6F8;
+}
+input{
+  border-style:groove;
+  width: 200px;
+}
+button{
+  border-style:groove;
+}
+.shadow{
+  box-shadow: 5px 10px 10px rgba(0,0,0,0.03);
 }
 </style>
